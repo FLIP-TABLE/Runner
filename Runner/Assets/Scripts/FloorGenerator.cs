@@ -1,31 +1,42 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class FloorGenerator : MonoBehaviour {
 
 	enum TILE{Floor, Hole, Step, Stair};
 
+    private int numHoles = 10;
+
 	public GameObject cubePrefab;
+    public GameObject runner;
+    public List<Vector3> holePositions;
 
 	private int holesGenerated = 0;
-	private Vector3 startPosition = new Vector3 (-30, -10, 0);
+    private Vector3 startPosition;
 	private Vector3 currentPosition;
 	private float stepSize = 1.0f;
+    private Vector3 floorOffset = new Vector3(-2, -3, 0);
 
 	// Use this for initialization
 	void Start () {
-		currentPosition = startPosition;
-		generatePlatform ();
+        holePositions = new List<Vector3>();
+
+        startPosition = runner.transform.position + floorOffset;
+        currentPosition = startPosition;
+        generatePlatform();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (reachedEnd()) {
+            print("You won!");
+        }
 	}
 
 	void generatePlatform() {
 		generateStart ();
-		while (holesGenerated < 10) {
+		while (holesGenerated < numHoles) {
 			TILE type = getRandomEnum<TILE> ();
 			switch(type) {
 			case TILE.Hole:
@@ -57,9 +68,11 @@ public class FloorGenerator : MonoBehaviour {
 	}
 
 	void generateHole() {
-		currentPosition.x += stepSize;
+		currentPosition.x += stepSize * 1.2f;
 		holesGenerated++;
 		generateFloor ();
+
+        holePositions.Add(currentPosition);
 	}
 
 	void generateStep() {
@@ -81,4 +94,12 @@ public class FloorGenerator : MonoBehaviour {
 		T V = (T)A.GetValue(Random.Range(0,A.Length));
 		return V;
 	}
+
+    bool reachedEnd() {
+        return (runner.transform.position.x > holePositions[holePositions.Count - 1].x);
+    }
+
+    int numHolesReached() {
+        return 0;
+    }
 }
