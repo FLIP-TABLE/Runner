@@ -99,7 +99,16 @@ public class FloorGenerator : MonoBehaviour {
         return (runner.transform.position.x > holePositions[holePositions.Count - 1].x);
     }
 
-    int numHolesReached() {
-        return 0;
+    public int numHolesReached() {
+
+        int count = 0;
+
+        for (int i = 0; i < holePositions.Count; i++) {
+            if (runner.transform.position.x > holePositions[i].x) {
+                count++;
+            }
+        }
+
+        return count;
     }
 }

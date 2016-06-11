@@ -47,6 +47,7 @@
   <ItemGroup>
      <Compile Include="Assets\Runner\Runner.cs" />
      <Compile Include="Assets\Scripts\FloorGenerator.cs" />
+     <Compile Include="Assets\Scripts\ScoreCounter.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
