@@ -2,80 +2,51 @@
 
 public class Runner : MonoBehaviour {
 
-    public Rigidbody rigidBody;
-    public GameObject camera;
-    public GameObject goal;
-    public GameObject killZone;
-    public GameObject killZoneLeft;
+    private string id;
 
+    private Rigidbody rigidBody;
     private Vector3 startPosition;
     private bool touchingPlatform;
     private bool runnerHasFinished;
-    private bool gameHasFinished;
+
+    private float maxSpeed = 5f;
+    private float jumpVelocity = 10f;
+    private float lastSpeed = 0f;
+    private bool shouldJump = false;
+    private bool hasDied = false;
 
     void Start () {
         startPosition = this.transform.position;
+        rigidBody = GetComponent<Rigidbody>();
     }
 
 	void Update () {
 
-        float speed = 3f;
-        float jumpVelocity = 5f;
-        float scrollspeed = 0.03f;
-
         if (Input.GetKey("left")) {
-            transform.Translate(-speed * Time.deltaTime, 0f, 0f);
+            lastSpeed = -1;
         } else if (Input.GetKey("right")) {
-            transform.Translate(speed * Time.deltaTime, 0f, 0f);
+            lastSpeed = 1;
         }
 
-        if(touchingPlatform && Input.GetKey("up")){
-            //rigidBody.AddForce(new Vector3(0, jumpVelocity, 0));
+        move(lastSpeed * maxSpeed * Time.deltaTime);
+
+        if(touchingPlatform && (Input.GetKey("up") || shouldJump)){
+            shouldJump = false;
             rigidBody.velocity = new Vector3(rigidBody.velocity.x, jumpVelocity, rigidBody.velocity.z);
 		}
-
-        if (!hasFinished() && !hasDied()) {
-            Vector3 newPosition = camera.transform.position;
-            newPosition.x += scrollspeed;
-            camera.transform.position = newPosition;
-
-            newPosition = killZoneLeft.transform.position;
-            newPosition.x += scrollspeed;
-            killZoneLeft.transform.position = newPosition;
-        }
 
         if(hasFinished()) {
             print("You win!");
         }
-
-        if (hasDied()) {
-            print("You died!");
-            //this.transform.position = startPosition;
-            //rigidBody.velocity = Vector3.zero;
-        }
 	}
+
+    public void move(float speed) {
+        transform.Translate(speed, 0f, 0f);
+    }
 
     bool hasFinished() {
         if (runnerHasFinished) {
             return true;
-        }
-//        else if (this.transform.position.x > goal.transform.position.x) {
-//            runnerHasFinished = true;
-//            return true;
-//        }
-
-        return false;
-    }
-
-    bool hasDied(){
-        if(gameHasFinished) {
-            return true;
-        }
-        else if (
-          (this.transform.position.y < killZone.transform.position.y) ||
-          (this.transform.position.x < killZoneLeft.transform.position.x)) {
-              gameHasFinished = true;
-              return true;
         }
 
         return false;
@@ -87,5 +58,31 @@ public class Runner : MonoBehaviour {
 
     void OnCollisionExit(Collision collision) {
         touchingPlatform = false;
+    }
+
+    public void setLastSpeed (float currentSpeed) {
+        lastSpeed = currentSpeed;
+    }
+
+    public void setShouldJump() {
+        if (touchingPlatform) {
+            shouldJump = true;
+        }
+    }
+
+    public string getId() {
+        return id;
+    }
+
+    public void setId(string id) {
+        this.id = id;
+    }
+
+    public void setHasDied(bool hasDied) {
+        this.hasDied = hasDied;
+    }
+
+    public bool getHasDied() {
+        return hasDied;
     }
 }
