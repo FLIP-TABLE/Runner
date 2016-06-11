@@ -11,6 +11,7 @@ public class Runner : MonoBehaviour {
     private Vector3 startPosition;
     private bool touchingPlatform;
     private bool runnerHasFinished;
+    private bool gameHasFinished;
 
     void Start () {
         startPosition = this.transform.position;
@@ -33,7 +34,7 @@ public class Runner : MonoBehaviour {
             rigidBody.velocity = new Vector3(rigidBody.velocity.x, jumpVelocity, rigidBody.velocity.z);
 		}
 
-        if (!hasFinished()) {
+        if (!hasFinished() && !hasDied()) {
             Vector3 newPosition = camera.transform.position;
             newPosition.x += scrollspeed;
             camera.transform.position = newPosition;
@@ -49,8 +50,8 @@ public class Runner : MonoBehaviour {
 
         if (hasDied()) {
             print("You died!");
-            this.transform.position = startPosition;
-            rigidBody.velocity = Vector3.zero;
+            //this.transform.position = startPosition;
+            //rigidBody.velocity = Vector3.zero;
         }
 	}
 
@@ -67,9 +68,17 @@ public class Runner : MonoBehaviour {
     }
 
     bool hasDied(){
-        return 
-            (this.transform.position.y < killZone.transform.position.y) ||
-            (this.transform.position.x < killZoneLeft.transform.position.x); ;
+        if(gameHasFinished) {
+            return true;
+        }
+        else if (
+          (this.transform.position.y < killZone.transform.position.y) ||
+          (this.transform.position.x < killZoneLeft.transform.position.x)) {
+              gameHasFinished = true;
+              return true;
+        }
+
+        return false;
     }
 
     void OnCollisionEnter(Collision collision) {
