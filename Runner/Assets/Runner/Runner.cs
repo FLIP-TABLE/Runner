@@ -59,10 +59,10 @@ public class Runner : MonoBehaviour {
         if (runnerHasFinished) {
             return true;
         }
-        else if (this.transform.position.x > goal.transform.position.x) {
-            runnerHasFinished = true;
-            return true;
-        }
+//        else if (this.transform.position.x > goal.transform.position.x) {
+//            runnerHasFinished = true;
+//            return true;
+//        }
 
         return false;
     }

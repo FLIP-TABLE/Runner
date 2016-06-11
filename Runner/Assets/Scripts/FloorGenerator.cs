@@ -6,12 +6,12 @@ public class FloorGenerator : MonoBehaviour {
 
 	enum TILE{Floor, Hole, Step, Stair};
 
-    private int numHoles = 10;
-
 	public GameObject cubePrefab;
     public GameObject runner;
     public List<Vector3> holePositions;
 
+	private TILE lastType;
+	private int numHoles = 10;
 	private int holesGenerated = 0;
     private Vector3 startPosition;
 	private Vector3 currentPosition;
@@ -38,6 +38,8 @@ public class FloorGenerator : MonoBehaviour {
 		generateStart ();
 		while (holesGenerated < numHoles) {
 			TILE type = getRandomEnum<TILE> ();
+			if (type == lastType)
+				continue;
 			switch(type) {
 			case TILE.Hole:
 				generateHole ();
@@ -46,11 +48,13 @@ public class FloorGenerator : MonoBehaviour {
 				generateStep ();
 				break;
 			case TILE.Stair:
+				generateStair ();
 				break;
 			default:
 				generateFloor ();	
 				break;
 			}
+			lastType = type;
 		}
 		generateEnd ();
 	}
@@ -68,7 +72,7 @@ public class FloorGenerator : MonoBehaviour {
 	}
 
 	void generateHole() {
-		currentPosition.x += stepSize * 1.2f;
+		currentPosition.x += stepSize * 1.5f;
 		holesGenerated++;
 		generateFloor ();
 
@@ -78,10 +82,16 @@ public class FloorGenerator : MonoBehaviour {
 	void generateStep() {
 		generateFloor ();
 		Instantiate (cubePrefab, currentPosition + new Vector3(0f, stepSize, 0f), new Quaternion ());
+		generateFloor ();
 	}
 
 	void generateStair() {
-		// TODO
+		generateFloor ();
+		Instantiate (cubePrefab, currentPosition + new Vector3(0f, stepSize, 0f), new Quaternion ());
+		generateFloor ();
+		Instantiate (cubePrefab, currentPosition + new Vector3(0f, stepSize, 0f), new Quaternion ());
+		Instantiate (cubePrefab, currentPosition + new Vector3(0f, 2*stepSize, 0f), new Quaternion ());
+		generateFloor ();
 	}
 
 	void generateFloor () {
